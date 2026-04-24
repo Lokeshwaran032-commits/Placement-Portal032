@@ -34,7 +34,15 @@ export default function Login() {
       toast.success(`Welcome back, ${res.data.name}! 🎉`);
       navigate(res.data.role === 'admin' ? '/admin-dashboard' : '/student-dashboard');
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Login failed');
+      if (err.response?.status === 401) {
+        toast.error('Invalid email or password. Please try again.');
+      } else if (err.response?.data?.detail) {
+        toast.error(err.response.data.detail);
+      } else if (!err.response) {
+        toast.error('Cannot connect to server. Make sure the backend is running.');
+      } else {
+        toast.error('Login failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

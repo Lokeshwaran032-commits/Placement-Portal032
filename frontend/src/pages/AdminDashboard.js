@@ -4,16 +4,6 @@ import toast from 'react-hot-toast';
 
 const STATUS_OPTIONS = ['Pending', 'Shortlisted', 'Rejected', 'Selected'];
 
-function StatusBadge({ status }) {
-  const map = {
-    Pending:     'badge-pending',
-    Shortlisted: 'badge-shortlisted',
-    Selected:    'badge-selected',
-    Rejected:    'badge-rejected',
-  };
-  return <span className={`badge ${map[status] || 'badge-pending'}`}>{status}</span>;
-}
-
 // ── Job Form ──────────────────────────────────────────────────────────────────
 function JobForm({ initial, onSave, onCancel }) {
   const empty = { title: '', company: '', description: '', location: '', salary: '', deadline: '', skills: '' };
@@ -144,6 +134,18 @@ export default function AdminDashboard() {
       toast.error('Failed to delete job');
     }
   };
+
+  const handleRemoveStudent = async (id) => {
+    if (!window.confirm('Are you sure you want to remove this student? All their applications will also be deleted.')) return;
+    try {
+      await API.delete(`/admin/students/${id}`);
+      toast.success('Student removed successfully');
+      fetchAll();
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Failed to remove student');
+    }
+  };
+
 
   const handleStatusChange = async (appId, status) => {
     try {
@@ -340,6 +342,7 @@ export default function AdminDashboard() {
                         <th>College</th>
                         <th>Branch</th>
                         <th>CGPA</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -357,6 +360,9 @@ export default function AdminDashboard() {
                                 color: s.cgpa >= 8 ? 'var(--success)' : s.cgpa >= 6 ? 'var(--warning)' : 'var(--danger)',
                               }}>{s.cgpa.toFixed(2)}</span>
                             ) : '—'}
+                          </td>
+                          <td>
+                            <button className="btn btn-danger btn-sm" onClick={() => handleRemoveStudent(s.id)}>Remove</button>
                           </td>
                         </tr>
                       ))}

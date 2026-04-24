@@ -11,11 +11,12 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Auto-logout on 401
+// Auto-logout on 401 (only when on protected pages, not on /login or /register)
 API.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    const isAuthPage = window.location.pathname === '/login' || window.location.pathname === '/register';
+    if (err.response?.status === 401 && !isAuthPage) {
       localStorage.clear();
       window.location.href = '/login';
     }

@@ -39,7 +39,7 @@ def seed_admin():
             )
             db.add(admin_user)
             db.commit()
-            print("✅ Default admin seeded: admin@portal.com / admin123")
+            print("[OK] Default admin seeded: admin@portal.com / admin123")
     finally:
         db.close()
 
@@ -49,7 +49,7 @@ seed_admin()
 
 @app.get("/")
 def root():
-    return {"message": "Placement Portal API is running 🚀"}
+    return {"message": "Placement Portal API is running"}
 
 
 @app.get("/health")

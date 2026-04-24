@@ -71,6 +71,18 @@ def all_students(db: Session = Depends(get_db), admin=Depends(get_current_admin)
     return db.query(models.User).filter(models.User.role == "student").all()
 
 
+@router.delete("/students/{student_id}", status_code=204)
+def remove_student(student_id: int, db: Session = Depends(get_db), admin=Depends(get_current_admin)):
+    student = db.query(models.User).filter(models.User.id == student_id, models.User.role == "student").first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    
+    db.query(models.Application).filter(models.Application.student_id == student_id).delete()
+    db.delete(student)
+    db.commit()
+    return None
+
+
 # ── Admin: All Jobs (including inactive) ─────────────────────────────────────
 
 @router.get("/jobs", response_model=List[schemas.JobOut])
