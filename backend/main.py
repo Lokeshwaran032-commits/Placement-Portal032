@@ -4,6 +4,7 @@ from database import engine, SessionLocal
 import models
 from auth import hash_password
 from routes import auth_routes, student, admin
+import os
 
 # Create tables
 models.Base.metadata.create_all(bind=engine)
@@ -29,17 +30,25 @@ app.include_router(admin.router)
 def seed_admin():
     db = SessionLocal()
     try:
-        existing = db.query(models.User).filter(models.User.email == "admin@portal.com").first()
+        admin_email = os.getenv("ADMIN_EMAIL", "admin@portal.com")
+        admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
+        
+        existing = db.query(models.User).filter(models.User.email == admin_email).first()
         if not existing:
             admin_user = models.User(
                 name="Admin",
-                email="admin@portal.com",
-                hashed_password=hash_password("admin123"),
+                email=admin_email,
+                hashed_password=hash_password(admin_password),
                 role="admin",
             )
             db.add(admin_user)
             db.commit()
-            print("[OK] Default admin seeded: admin@portal.com / admin123")
+            print(f"[OK] Default admin seeded: {admin_email}")
+        else:
+            # Update password if it was changed
+            existing.hashed_password = hash_password(admin_password)
+            db.commit()
+            print(f"[OK] Admin password synced for: {admin_email}")
     finally:
         db.close()
 
