@@ -98,18 +98,7 @@ export default function Login() {
             <Link to="/register" style={{ color: 'var(--primary-light)', fontWeight: 600 }}>Register</Link>
           </p>
 
-          {/* Demo hint */}
-          <div style={{
-            marginTop: '1.5rem',
-            padding: '0.85rem',
-            background: 'rgba(99,102,241,0.08)',
-            borderRadius: 'var(--radius)',
-            border: '1px solid rgba(99,102,241,0.2)',
-            fontSize: '0.8rem',
-            color: 'var(--text-muted)',
-          }}>
-            <strong style={{ color: 'var(--primary-light)' }}>Demo Admin:</strong> admin@portal.com / admin123
-          </div>
+
         </div>
       </div>
     </div>
